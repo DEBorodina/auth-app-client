@@ -1,0 +1,6 @@
+input {
+    &:-webkit-autofill,
+    &:-webkit-autofill:focus {
+        transition: all 0s 50000s;
+    }
+}
