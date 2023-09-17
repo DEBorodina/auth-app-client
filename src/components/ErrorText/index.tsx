@@ -8,8 +8,9 @@ export const ErrorText: React.FC<{
   return (
     <Typography
       paragraph
-      sx={{ width: "100%", height: 22, color: "red", ...sx }}
+      sx={{ width: "100%", height: 22, ...sx }}
       variant="caption"
+      color="primary"
     >
       {children}
     </Typography>
