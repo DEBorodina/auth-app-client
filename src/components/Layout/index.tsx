@@ -13,7 +13,7 @@ export const Layout: React.FC<{ children: ReactNode; sx?: SxProps<Theme> }> = ({
         flexDirection: "column",
         justifyContent: "space-around",
         alignItems: "center",
-        mt: 10,
+        mt: 4,
         minHeight: 300,
         ...sx,
       }}

@@ -7,6 +7,7 @@ import { InfoText } from "../components/InfoText";
 import EditIcon from "@mui/icons-material/Edit";
 
 import { EditUserForm } from "../forms/EditUserForm";
+import { Chat } from "../components/Chat";
 
 export const ProfilePage = () => {
   const { setUser, user } = useContext(UserContext)!;
@@ -32,6 +33,7 @@ export const ProfilePage = () => {
           <EditIcon fontSize="inherit" color="primary" />
         </IconButton>
       )}
+      <Chat />
       <Button variant="contained" onClick={handleLogout}>
         Log out
       </Button>

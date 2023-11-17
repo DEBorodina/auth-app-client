@@ -4,3 +4,26 @@ input {
         transition: all 0s 50000s;
     }
 }
+
+*{
+    margin: 0;
+    padding: 0;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.04);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #FF5864;
+    border-radius: 10px;
+}
+
