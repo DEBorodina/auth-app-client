@@ -13,3 +13,10 @@ export interface IUser extends Omit<IAuthCredentials, "password"> {
 }
 
 export interface IUpdateCredentials extends Omit<IAuthCredentials, "email"> {}
+
+export type IMessage = {
+  authorName: string;
+  authorLastName: string;
+  authorId: string;
+  text: string;
+};

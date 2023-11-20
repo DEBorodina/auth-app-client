@@ -1,12 +1,20 @@
 import { Avatar, Typography } from "@mui/material";
-import { MessageProps } from "./types";
 import { COLORS } from "../../constants/color";
+import { IMessage } from "../../types";
+import { UserContext } from "../../contexts/user";
+import { useContext } from "react";
 
-export const Message: React.FC<MessageProps> = ({
+export const Message: React.FC<IMessage> = ({
   authorName,
   authorLastName,
+  authorId,
   text,
 }) => {
+  const { user } = useContext(UserContext)!;
+
+  const isCurrentUser = user?.id == authorId;
+  const avatarColor = isCurrentUser ? COLORS.PRIMARY : COLORS.BLACK;
+
   return (
     <div
       style={{
@@ -16,7 +24,7 @@ export const Message: React.FC<MessageProps> = ({
         marginBottom: 8,
       }}
     >
-      <Avatar sx={{ bgcolor: COLORS.PRIMARY + "aa" }}>
+      <Avatar sx={{ bgcolor: avatarColor + "aa" }}>
         {authorName[0] + authorLastName[0]}
       </Avatar>
       <div

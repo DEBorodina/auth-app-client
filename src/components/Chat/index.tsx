@@ -1,13 +1,21 @@
 import { IconButton, TextField } from "@mui/material";
 import { Message } from "../Message";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../../contexts/user";
 import SendIcon from "@mui/icons-material/Send";
+
+const AlwaysScrollToBottom = () => {
+  const elementRef = useRef();
+  useEffect(() => elementRef.current.scrollIntoView());
+  return <div ref={elementRef} />;
+};
 
 export const Chat = () => {
   const { user } = useContext(UserContext)!;
   const [value, setValue] = useState("");
-  const [ws, setWs] = useState(null);
+  const [ws, setWs] = useState<WebSocket>();
+  const [messages, setMessages] = useState<any[]>([]);
+  const chat = useRef<HTMLDivElement>(null);
 
   const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
@@ -16,11 +24,12 @@ export const Chat = () => {
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (value) {
+    if (value && ws) {
       ws.send(
         JSON.stringify({
           authorName: user?.name,
           authorLastName: user?.lastName,
+          authorId: user?.id,
           text: value,
         })
       );
@@ -28,25 +37,28 @@ export const Chat = () => {
     }
   };
 
-  const [messages, setMessages] = useState<any[]>([]);
-
   useEffect(() => {
     const ws = new WebSocket(`ws://localhost:5001`);
     setWs(ws);
-    ws.addEventListener("open", () => {
-      console.log("Websocket connection opened");
-    });
-    ws.addEventListener("close", () => {
-      console.log("Websocket connection closed");
-    });
 
     ws.addEventListener("message", function incoming(event) {
       const data = JSON.parse(event.data).map((message) =>
         JSON.parse(Buffer.from(message.data).toString())
       );
       setMessages(data);
+      scrollToBottom();
     });
   }, []);
+
+  const scrollToBottom = () => {
+    const node: HTMLDivElement | null = chat.current; //get the element via ref
+
+    if (node) {
+      console.log("scroll");
+      //current ref can be null, so we have to check
+      node.scrollIntoView({ behavior: "smooth" }); //scroll to the targeted element
+    }
+  };
   return (
     <div
       style={{
@@ -69,13 +81,10 @@ export const Chat = () => {
           overflowY: "auto",
         }}
       >
-        {messages.map(({ authorLastName, authorName, text }) => (
-          <Message
-            authorLastName={authorLastName}
-            authorName={authorName}
-            text={text}
-          />
+        {messages.map((message) => (
+          <Message {...message} />
         ))}
+        <AlwaysScrollToBottom />
       </div>
 
       <form style={{ display: "flex" }} onSubmit={handleSendMessage}>
