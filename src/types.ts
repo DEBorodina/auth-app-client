@@ -19,4 +19,10 @@ export type IMessage = {
   authorLastName: string;
   authorId: string;
   text: string;
+  id: string;
 };
+
+export interface IUserData {
+  user: IUser;
+  messages: string;
+}

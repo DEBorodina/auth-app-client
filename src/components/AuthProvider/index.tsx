@@ -1,15 +1,15 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import { UserService } from "../../sevices/UserService";
-import { IUser } from "../../types";
 import { cryptoService } from "../../sevices/CryptoService";
 import { Loader } from "../Loader";
 import { BrowserRouter } from "react-router-dom";
 import { UserContext } from "../../contexts/user";
+import { IUserData } from "../../types";
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<IUser | null>(null);
+  const [userData, setUserData] = useState<IUserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isConnected, setIsConnected] = useState<boolean>(
     Boolean(localStorage.getItem("key") && localStorage.getItem("sessionId"))
@@ -18,9 +18,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   const fetchUserData = async () => {
     try {
-      if (!user) {
-        const userData = await UserService.getUser();
-        setUser(userData);
+      if (!userData) {
+        const data = await UserService.getUser();
+        console.log(data);
+        setUserData(data);
       }
     } catch (e) {
       console.log(e);
@@ -46,7 +47,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ userData, setUserData }}>
       <BrowserRouter>
         {isLoading || connecting ? <Loader /> : children}
       </BrowserRouter>

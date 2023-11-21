@@ -3,19 +3,24 @@ import { Message } from "../Message";
 import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../../contexts/user";
 import SendIcon from "@mui/icons-material/Send";
+import { IMessage } from "../../types";
+import { cryptoService } from "../../sevices/CryptoService";
 
 const AlwaysScrollToBottom = () => {
-  const elementRef = useRef();
-  useEffect(() => elementRef.current.scrollIntoView());
+  const elementRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => elementRef?.current?.scrollIntoView());
+
   return <div ref={elementRef} />;
 };
 
 export const Chat = () => {
-  const { user } = useContext(UserContext)!;
+  const { userData } = useContext(UserContext)!;
   const [value, setValue] = useState("");
   const [ws, setWs] = useState<WebSocket>();
-  const [messages, setMessages] = useState<any[]>([]);
-  const chat = useRef<HTMLDivElement>(null);
+  const [messages, setMessages] = useState<IMessage[] | undefined>(
+    userData?.messages && JSON.parse(userData?.messages)
+  );
 
   const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
@@ -27,38 +32,39 @@ export const Chat = () => {
     if (value && ws) {
       ws.send(
         JSON.stringify({
-          authorName: user?.name,
-          authorLastName: user?.lastName,
-          authorId: user?.id,
-          text: value,
+          data: cryptoService.encryptData({
+            authorName: userData?.user?.name,
+            authorLastName: userData?.user?.lastName,
+            authorId: userData?.user?.id,
+            text: value,
+          }),
+          sessionId: localStorage.getItem("sessionId"),
         })
       );
       setValue("");
     }
   };
 
-  useEffect(() => {
+  const openWebSocket = () => {
     const ws = new WebSocket(`ws://localhost:5001`);
-    setWs(ws);
-
-    ws.addEventListener("message", function incoming(event) {
-      const data = JSON.parse(event.data).map((message) =>
-        JSON.parse(Buffer.from(message.data).toString())
+    ws.onopen = () => {
+      setWs(ws);
+      ws.send(
+        JSON.stringify({
+          sessionId: localStorage.getItem("sessionId"),
+        })
       );
-      setMessages(data);
-      scrollToBottom();
-    });
+      ws.addEventListener("message", function incoming(event) {
+        const data = cryptoService.decryptData(event.data);
+        setMessages(data);
+      });
+    };
+  };
+
+  useEffect(() => {
+    openWebSocket();
   }, []);
 
-  const scrollToBottom = () => {
-    const node: HTMLDivElement | null = chat.current; //get the element via ref
-
-    if (node) {
-      console.log("scroll");
-      //current ref can be null, so we have to check
-      node.scrollIntoView({ behavior: "smooth" }); //scroll to the targeted element
-    }
-  };
   return (
     <div
       style={{
@@ -81,9 +87,8 @@ export const Chat = () => {
           overflowY: "auto",
         }}
       >
-        {messages.map((message) => (
-          <Message {...message} />
-        ))}
+        {messages &&
+          messages.map((message) => <Message key={message.id} {...message} />)}
         <AlwaysScrollToBottom />
       </div>
 

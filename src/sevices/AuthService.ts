@@ -1,5 +1,5 @@
 import { api } from "../http";
-import { IUser } from "../types";
+import { IUser, IUserData } from "../types";
 import { cryptoService } from "./CryptoService";
 
 export type AuthResponse = {
@@ -42,18 +42,20 @@ export class AuthService {
     localStorage.setItem("token", token);
   }
 
-  static async verifyCode(code: string): Promise<IUser> {
+  static async verifyCode(code: string): Promise<IUserData> {
     code = cryptoService.encryptData(code);
     const response = await api.post("/verify-code", {
       code,
     });
-    const user = response.data;
+    const { user, messages } = response.data;
 
     for (const field in user) {
       user[field] = cryptoService.decryptData(user[field]);
     }
 
-    return user;
+    const decryptedMessage = cryptoService.decryptData(messages);
+
+    return { user, messages: decryptedMessage };
   }
 
   static async logout() {

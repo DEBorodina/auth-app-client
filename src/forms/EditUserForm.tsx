@@ -22,8 +22,9 @@ export const EditUserForm: React.FC<{
 }> = ({ setEdit }) => {
   const [submittingErrors, setSubmittingErrors] = useState("");
 
-  const { setUser, user } = useContext(UserContext)!;
-  const { name, lastName } = user!;
+  const { setUserData, userData } = useContext(UserContext)!;
+  const { user, messages } = userData!;
+  const { name, lastName } = user;
   const initialValues = { name, lastName, password: "" };
   const handleCancel = () => {
     setEdit(false);
@@ -31,8 +32,8 @@ export const EditUserForm: React.FC<{
 
   const handleSubmit = async (values: IUpdateCredentials) => {
     try {
-      const user = await UserService.updateUser(values);
-      setUser(user);
+      const newUser = await UserService.updateUser(values);
+      setUserData({ messages, user: newUser });
       setEdit(false);
     } catch (e) {
       const message = (e as AxiosError<{ message: string }>)?.response?.data

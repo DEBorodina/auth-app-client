@@ -10,7 +10,7 @@ import { EditUserForm } from "../forms/EditUserForm";
 import { Chat } from "../components/Chat";
 
 export const ProfilePage = () => {
-  const { setUser, user } = useContext(UserContext)!;
+  const { setUserData, userData } = useContext(UserContext)!;
 
   const [edit, setEdit] = useState(false);
 
@@ -19,13 +19,13 @@ export const ProfilePage = () => {
   };
 
   const handleLogout = () => {
-    setUser(null);
+    setUserData(null);
     AuthService.logout();
   };
 
   return (
     <Layout sx={{ minHeight: 200 }}>
-      <InfoText>Hi, {user?.name}!</InfoText>
+      <InfoText>Hi, {userData?.user?.name}!</InfoText>
       {edit ? (
         <EditUserForm setEdit={setEdit} />
       ) : (

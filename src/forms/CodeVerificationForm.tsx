@@ -20,12 +20,13 @@ const validationSchemaCode = Yup.object().shape({
 
 export const CodeVerificationForm = () => {
   const [submittingErrors, setSubmittingErrors] = useState("");
-  const { setUser } = useContext(UserContext)!;
+  const { setUserData } = useContext(UserContext)!;
 
   const handleSubmitCode = async ({ code }: { code: string }) => {
     try {
-      const user = await AuthService.verifyCode(code);
-      setUser(user);
+      const userData = await AuthService.verifyCode(code);
+      console.log(userData);
+      setUserData(userData);
     } catch (e) {
       const message = (e as AxiosError<{ message: string }>)?.response?.data
         ?.message;

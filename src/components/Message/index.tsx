@@ -10,9 +10,9 @@ export const Message: React.FC<IMessage> = ({
   authorId,
   text,
 }) => {
-  const { user } = useContext(UserContext)!;
+  const { userData } = useContext(UserContext)!;
 
-  const isCurrentUser = user?.id == authorId;
+  const isCurrentUser = userData?.user?.id == authorId;
   const avatarColor = isCurrentUser ? COLORS.PRIMARY : COLORS.BLACK;
 
   return (
