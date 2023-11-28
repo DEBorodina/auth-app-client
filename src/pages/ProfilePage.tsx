@@ -1,21 +1,38 @@
 import { Layout } from "../components/Layout";
-import { Button, IconButton } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  Container,
+  IconButton,
+  LinearProgress,
+} from "@mui/material";
 import { AuthService } from "../sevices/AuthService";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../contexts/user";
 import { InfoText } from "../components/InfoText";
-import EditIcon from "@mui/icons-material/Edit";
-
-import { EditUserForm } from "../forms/EditUserForm";
-import { Chat } from "../components/Chat";
+import { FilesTable } from "../components/FilesTable";
+import AddIcon from "@mui/icons-material/Add";
+import { Modal } from "../components/Modal";
+import { CreateFileForm } from "../forms/CreateFileForm";
+import { IFile } from "../types";
+import { Loader } from "../components/Loader";
+import { fileService } from "../sevices/FileService";
 
 export const ProfilePage = () => {
-  const { setUserData, userData } = useContext(UserContext)!;
+  const { setUserData } = useContext(UserContext)!;
+  const [files, setFiles] = useState<IFile[]>([]);
+  const [filesLoading, setFilesLoading] = useState(true);
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<IFile | null>(null);
 
-  const [edit, setEdit] = useState(false);
+  const handleToggleAddModal = () => {
+    setAddModalOpen(!addModalOpen);
+  };
 
-  const handleEdit = () => {
-    setEdit(true);
+  const handleAddFile = (newFile: IFile) => {
+    setFiles([newFile, ...files]);
+    setSelectedFile(null);
+    handleToggleAddModal();
   };
 
   const handleLogout = () => {
@@ -23,17 +40,68 @@ export const ProfilePage = () => {
     AuthService.logout();
   };
 
+  const handleAddFileWithModal = () => {
+    setSelectedFile(null);
+    handleToggleAddModal();
+  };
+
+  const handleFileClick = (fileId: string) => () => {
+    const chosenFile = files.find(({ id }) => id === fileId)!;
+    setSelectedFile(chosenFile);
+    setAddModalOpen(true);
+  };
+
+  const uploadFiles = async () => {
+    const files = await fileService.getFiles();
+    setFiles(files);
+    setFilesLoading(false);
+  };
+
+  useEffect(() => {
+    uploadFiles();
+  }, []);
+
   return (
-    <Layout sx={{ minHeight: 200 }}>
-      <InfoText>Hi, {userData?.user?.name}!</InfoText>
-      {edit ? (
-        <EditUserForm setEdit={setEdit} />
-      ) : (
-        <IconButton size="large" onClick={handleEdit}>
-          <EditIcon fontSize="inherit" color="primary" />
-        </IconButton>
-      )}
-      <Chat />
+    <Layout
+      sx={{
+        minHeight: 200,
+        height: "calc(100vh - 32px)",
+      }}
+      maxWidth="xs"
+    >
+      <Modal open={addModalOpen} onClose={handleToggleAddModal}>
+        <CreateFileForm
+          onCancel={handleToggleAddModal}
+          onAdd={handleAddFile}
+          initialValues={selectedFile}
+        />
+      </Modal>
+      <Container
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          height: 500,
+        }}
+      >
+        <InfoText>My files</InfoText>
+        <Container
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          {filesLoading ? (
+            <CircularProgress />
+          ) : (
+            <FilesTable files={files} onFileClick={handleFileClick} />
+          )}
+          <IconButton size="small" onClick={handleAddFileWithModal}>
+            <AddIcon style={{ fontSize: 48 }} color="primary" />
+          </IconButton>
+        </Container>
+      </Container>
       <Button variant="contained" onClick={handleLogout}>
         Log out
       </Button>

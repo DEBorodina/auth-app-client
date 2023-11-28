@@ -26,3 +26,10 @@ export interface IUserData {
   user: IUser;
   messages: string;
 }
+
+export interface IFile {
+  fileName: string;
+  text: string;
+  authorId: string;
+  id: string;
+}

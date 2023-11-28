@@ -23,8 +23,7 @@ export const EditUserForm: React.FC<{
   const [submittingErrors, setSubmittingErrors] = useState("");
 
   const { setUserData, userData } = useContext(UserContext)!;
-  const { user, messages } = userData!;
-  const { name, lastName } = user;
+  const { name, lastName } = userData!;
   const initialValues = { name, lastName, password: "" };
   const handleCancel = () => {
     setEdit(false);
@@ -33,7 +32,7 @@ export const EditUserForm: React.FC<{
   const handleSubmit = async (values: IUpdateCredentials) => {
     try {
       const newUser = await UserService.updateUser(values);
-      setUserData({ messages, user: newUser });
+      setUserData(newUser);
       setEdit(false);
     } catch (e) {
       const message = (e as AxiosError<{ message: string }>)?.response?.data
@@ -42,7 +41,7 @@ export const EditUserForm: React.FC<{
     }
   };
   return (
-    <Layout sx={{ mt: 0, mb: 16 }}>
+    <Layout maxWidth="md" sx={{ mt: 0, mb: 16 }}>
       <Formik
         onSubmit={handleSubmit}
         initialValues={initialValues}

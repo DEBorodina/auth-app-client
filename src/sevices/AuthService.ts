@@ -47,15 +47,13 @@ export class AuthService {
     const response = await api.post("/verify-code", {
       code,
     });
-    const { user, messages } = response.data;
+    const user = response.data;
 
     for (const field in user) {
       user[field] = cryptoService.decryptData(user[field]);
     }
 
-    const decryptedMessage = cryptoService.decryptData(messages);
-
-    return { user, messages: decryptedMessage };
+    return user;
   }
 
   static async logout() {

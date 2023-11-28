@@ -4,12 +4,12 @@ import { cryptoService } from "../../sevices/CryptoService";
 import { Loader } from "../Loader";
 import { BrowserRouter } from "react-router-dom";
 import { UserContext } from "../../contexts/user";
-import { IUserData } from "../../types";
+import { IUser } from "../../types";
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [userData, setUserData] = useState<IUserData | null>(null);
+  const [userData, setUserData] = useState<IUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isConnected, setIsConnected] = useState<boolean>(
     Boolean(localStorage.getItem("key") && localStorage.getItem("sessionId"))
@@ -20,7 +20,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     try {
       if (!userData) {
         const data = await UserService.getUser();
-        console.log(data);
         setUserData(data);
       }
     } catch (e) {

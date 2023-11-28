@@ -1,13 +1,14 @@
-import { Container, SxProps, Theme } from "@mui/material";
+import { Breakpoint, Container, SxProps, Theme } from "@mui/material";
 import { ReactNode } from "react";
 
-export const Layout: React.FC<{ children: ReactNode; sx?: SxProps<Theme> }> = ({
-  children,
-  sx,
-}) => {
+export const Layout: React.FC<{
+  children: ReactNode;
+  sx?: SxProps<Theme>;
+  maxWidth?: Breakpoint;
+}> = ({ children, sx, maxWidth = "xs" }) => {
   return (
     <Container
-      maxWidth="xs"
+      maxWidth={maxWidth}
       sx={{
         display: "flex",
         flexDirection: "column",

@@ -1,20 +1,18 @@
 import { api } from "../http";
-import { IUpdateCredentials, IUser, IUserData } from "../types";
+import { IUpdateCredentials, IUser } from "../types";
 import { cryptoService } from "./CryptoService";
 
 export class UserService {
-  static async getUser(): Promise<IUserData | null> {
+  static async getUser(): Promise<IUser | null> {
     if (localStorage.getItem("token")) {
       const response = await api.get("/user");
-      const { user, messages } = response.data;
+      const user = response.data;
 
       for (const field in user) {
         user[field] = cryptoService.decryptData(user[field]);
       }
 
-      const decryptedMessage = cryptoService.decryptData(messages);
-
-      return { user, messages: decryptedMessage };
+      return user;
     }
     return null;
   }

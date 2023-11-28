@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, createContext } from "react";
-import { IUserData } from "../types";
+import { IUser } from "../types";
 
 export const UserContext = createContext<{
-  userData: IUserData | null;
-  setUserData: Dispatch<SetStateAction<IUserData | null>>;
+  userData: IUser | null;
+  setUserData: Dispatch<SetStateAction<IUser | null>>;
 } | null>(null);
