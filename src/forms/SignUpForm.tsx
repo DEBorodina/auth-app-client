@@ -45,6 +45,7 @@ export const SignUpForm: React.FC<{
       const message = (e as AxiosError<{ message: string }>)?.response?.data
         ?.message;
       setSubmittingErrors(message || "");
+      console.log(e);
     }
   };
 

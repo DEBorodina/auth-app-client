@@ -7,7 +7,20 @@ class FileService {
     const response = await api.get("/files");
 
     const files = cryptoService.decryptData(response.data);
-    return JSON.parse(files);
+
+    return files;
+  }
+
+  async addFile(fileName: string, fileContent: string): Promise<IFile[]> {
+    const file = cryptoService.encryptData({
+      fileName,
+      fileContent,
+    });
+    const response = await api.post("/files", { file });
+
+    const files = cryptoService.decryptData(response.data);
+
+    return files;
   }
 }
 

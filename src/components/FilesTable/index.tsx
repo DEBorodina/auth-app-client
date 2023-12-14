@@ -7,21 +7,29 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { IFile } from "../../types";
 import { InfoText } from "../InfoText";
+import { COLORS } from "../../constants/color";
+import { Typography } from "@mui/material";
 
 export const FilesTable: React.FC<{
   files: IFile[];
   onFileClick: (fileId: string) => () => void;
 }> = ({ files, onFileClick }) => {
   if (!files.length) {
-    return <InfoText>No files yet</InfoText>;
+    return <InfoText sx={{ marginBottom: 4 }}>No files yet</InfoText>;
   }
 
   return (
     <TableContainer component={Paper} sx={{ marginBottom: 4, maxHeight: 320 }}>
       <Table>
         <TableHead>
-          <TableRow>
-            <TableCell>File name</TableCell>
+          <TableRow
+            style={{ backgroundColor: COLORS.PRIMARY + "aa", color: "white" }}
+          >
+            <TableCell>
+              <Typography color={COLORS.WHITE} variant="h6">
+                File name
+              </Typography>
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -35,7 +43,7 @@ export const FilesTable: React.FC<{
               onClick={onFileClick(file.id)}
             >
               <TableCell component="th" scope="row">
-                {file.fileName}
+                <Typography variant="subtitle1">{file.fileName}</Typography>
               </TableCell>
             </TableRow>
           ))}

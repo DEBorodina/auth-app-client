@@ -15,17 +15,18 @@ import InputMask from "react-input-mask";
 const validationSchemaCode = Yup.object().shape({
   code: Yup.string()
     .required("Code is empty")
-    .length(4, "Code length should be 4"),
+    .length(10, "Code length should be 10"),
 });
 
-export const CodeVerificationForm = () => {
+export const CodeVerificationForm: React.FC<{ message: string }> = ({
+  message,
+}) => {
   const [submittingErrors, setSubmittingErrors] = useState("");
   const { setUserData } = useContext(UserContext)!;
 
   const handleSubmitCode = async ({ code }: { code: string }) => {
     try {
       const userData = await AuthService.verifyCode(code);
-      console.log(userData);
       setUserData(userData);
     } catch (e) {
       const message = (e as AxiosError<{ message: string }>)?.response?.data
@@ -54,16 +55,13 @@ export const CodeVerificationForm = () => {
           isSubmitting,
         }: FormikProps<{ code: string }>) => (
           <Form onSubmit={handleSubmit}>
-            <InfoText sx={{ width: "100%" }}>
-              Verification is needed! We sent a code to your email. Enter the
-              code to continue.
-            </InfoText>
-            <Container sx={{ width: "60%" }}>
+            <InfoText sx={{ width: "100%" }}>{message}</InfoText>
+            <Container sx={{ width: "80%" }}>
               <ErrorText>
                 {submittingErrors || (touched.code && errors.code)}
               </ErrorText>
               <InputMask
-                mask="9  9  9  9"
+                mask="9  9  9  9  9  9  9  9  9  9"
                 value={values.code}
                 disabled={false}
                 maskChar=" "

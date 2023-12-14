@@ -13,7 +13,7 @@ import { v4 as uuid } from "uuid";
 
 const validationSchema = Yup.object().shape({
   fileName: Yup.string().required("File name is required"),
-  text: Yup.string().required("Text is required"),
+  content: Yup.string().required("Text is required"),
 });
 
 export const CreateFileForm: React.FC<{
@@ -26,7 +26,7 @@ export const CreateFileForm: React.FC<{
   const { userData } = useContext(UserContext)!;
   const { id } = userData!;
   const initialFormValues = initialValues ?? {
-    text: "",
+    content: "",
     fileName: "",
     authorId: id,
     id: uuid(),
@@ -86,19 +86,19 @@ export const CreateFileForm: React.FC<{
               label="Text"
               variant="outlined"
               type="text"
-              name="text"
+              name="content"
               onChange={(e) => {
                 setSubmittingErrors("");
                 handleChange(e);
               }}
               onBlur={handleBlur}
-              value={values.text}
+              value={values.content}
               rows={4}
               maxRows={4}
               multiline
               fullWidth
             />
-            <ErrorText>{touched.text && errors.text}</ErrorText>
+            <ErrorText>{touched.content && errors.content}</ErrorText>
             {!initialValues && (
               <Box
                 sx={{

@@ -1,5 +1,5 @@
 import { api } from "../http";
-import { IUser, IUserData } from "../types";
+import { IUser } from "../types";
 import { cryptoService } from "./CryptoService";
 
 export type AuthResponse = {
@@ -13,10 +13,10 @@ export class AuthService {
     password = cryptoService.encryptData(password);
 
     const response = await api.post("/login", { email, password });
+    const userIdEncrypted = response.data;
+    const userId = cryptoService.decryptData(userIdEncrypted);
 
-    const token = cryptoService.decryptData(response.data);
-
-    localStorage.setItem("token", token);
+    sessionStorage.setItem("user-id", userId);
   }
 
   static async registration(
@@ -37,21 +37,32 @@ export class AuthService {
       lastName,
     });
 
-    const token = cryptoService.decryptData(response.data);
+    const userIdEncrypted = response.data;
+    const userId = cryptoService.decryptData(userIdEncrypted);
 
-    localStorage.setItem("token", token);
+    sessionStorage.setItem("user-id", userId);
   }
 
-  static async verifyCode(code: string): Promise<IUserData> {
+  static async verifyCode(code: string): Promise<IUser> {
+    const userIdToEncrypt = sessionStorage.getItem("user-id");
+    sessionStorage.removeItem("user-id");
+
     code = cryptoService.encryptData(code);
+    const userId = cryptoService.encryptData(userIdToEncrypt);
+
     const response = await api.post("/verify-code", {
       code,
+      userId,
     });
-    const user = response.data;
+    const { user, token } = response.data;
 
     for (const field in user) {
       user[field] = cryptoService.decryptData(user[field]);
     }
+
+    const encryptedToken = cryptoService.decryptData(token);
+
+    localStorage.setItem("token", encryptedToken);
 
     return user;
   }

@@ -4,19 +4,18 @@ import {
   CircularProgress,
   Container,
   IconButton,
-  LinearProgress,
+  Typography,
 } from "@mui/material";
 import { AuthService } from "../sevices/AuthService";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../contexts/user";
-import { InfoText } from "../components/InfoText";
 import { FilesTable } from "../components/FilesTable";
 import AddIcon from "@mui/icons-material/Add";
 import { Modal } from "../components/Modal";
 import { CreateFileForm } from "../forms/CreateFileForm";
 import { IFile } from "../types";
-import { Loader } from "../components/Loader";
 import { fileService } from "../sevices/FileService";
+import { Loader } from "../components/Loader";
 
 export const ProfilePage = () => {
   const { setUserData } = useContext(UserContext)!;
@@ -29,10 +28,19 @@ export const ProfilePage = () => {
     setAddModalOpen(!addModalOpen);
   };
 
-  const handleAddFile = (newFile: IFile) => {
-    setFiles([newFile, ...files]);
-    setSelectedFile(null);
-    handleToggleAddModal();
+  const handleAddFile = async (newFile: IFile) => {
+    try {
+      const files = await fileService.addFile(
+        newFile.fileName,
+        newFile.content
+      );
+      setFiles(files);
+
+      setSelectedFile(null);
+      handleToggleAddModal();
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const handleLogout = () => {
@@ -61,6 +69,10 @@ export const ProfilePage = () => {
     uploadFiles();
   }, []);
 
+  if (filesLoading) {
+    return <Loader />;
+  }
+
   return (
     <Layout
       sx={{
@@ -84,7 +96,9 @@ export const ProfilePage = () => {
           height: 500,
         }}
       >
-        <InfoText>My files</InfoText>
+        <Typography variant="h2" sx={{ marginBottom: 4 }}>
+          My files
+        </Typography>
         <Container
           sx={{
             display: "flex",
@@ -92,11 +106,7 @@ export const ProfilePage = () => {
             alignItems: "center",
           }}
         >
-          {filesLoading ? (
-            <CircularProgress />
-          ) : (
-            <FilesTable files={files} onFileClick={handleFileClick} />
-          )}
+          <FilesTable files={files} onFileClick={handleFileClick} />
           <IconButton size="small" onClick={handleAddFileWithModal}>
             <AddIcon style={{ fontSize: 48 }} color="primary" />
           </IconButton>

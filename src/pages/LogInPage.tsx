@@ -6,7 +6,7 @@ export const LogInPage = () => {
   const [needsActivation, setNeedsActivation] = useState(false);
 
   if (needsActivation) {
-    return <CodeVerificationForm />;
+    return <CodeVerificationForm message="Enter your verification code" />;
   }
 
   return <LogInForm needsActivation={setNeedsActivation} />;

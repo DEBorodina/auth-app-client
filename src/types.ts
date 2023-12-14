@@ -29,7 +29,7 @@ export interface IUserData {
 
 export interface IFile {
   fileName: string;
-  text: string;
+  content: string;
   authorId: string;
   id: string;
 }

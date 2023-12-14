@@ -4,9 +4,15 @@ import { ReactNode } from "react";
 export const InfoText: React.FC<{
   children: ReactNode;
   sx?: SxProps<Theme>;
-}> = ({ children, sx }) => {
+  color?: string;
+}> = ({ children, sx, color }) => {
   return (
-    <Typography paragraph sx={{ textAlign: "center", ...sx }} variant="body1">
+    <Typography
+      paragraph
+      sx={{ textAlign: "center", ...sx }}
+      variant="body1"
+      color={color}
+    >
       {children}
     </Typography>
   );
