@@ -1,11 +1,5 @@
 import { Layout } from "../components/Layout";
-import {
-  Button,
-  CircularProgress,
-  Container,
-  IconButton,
-  Typography,
-} from "@mui/material";
+import { Button, Container, IconButton, Typography } from "@mui/material";
 import { AuthService } from "../sevices/AuthService";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../contexts/user";
