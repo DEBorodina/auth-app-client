@@ -46,7 +46,7 @@ export const Chat = () => {
   };
 
   const openWebSocket = () => {
-    const ws = new WebSocket(`ws://localhost:5001`);
+    const ws = new WebSocket(import.meta.env.VITE_WS_URL ?? "");
     ws.onopen = () => {
       setWs(ws);
       ws.send(
